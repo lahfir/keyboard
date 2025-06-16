@@ -8,7 +8,6 @@
  */
 import { FC, useCallback, useMemo, useState } from 'react';
 import {
-    Dimensions,
     Text,
     View,
     Pressable,
@@ -24,6 +23,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
+import { GRADIENTS } from 'utils/colors';
 
 /**
  * Simple immutable Fisher–Yates shuffle.
@@ -40,6 +40,75 @@ function shuffleArray<T>(array: readonly T[]): T[] {
 type CustomKeyboardProps = {
     /** Callback triggered when a key is pressed. Receives the selected letter. */
     onKeyPress: (key: TKey) => void;
+};
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const AnimatedText = Animated.createAnimatedComponent(Text);
+
+/**
+ * A single, animated key button. By defining it outside the main component,
+ * we ensure it's a stable component whose animations and state aren't reset
+ * on every reshuffle.
+ */
+const KeyButton: FC<{
+    letter: TKey;
+    onPressIn: (key: TKey) => void;
+    onPressOut: () => void;
+    width: number;
+    height: number;
+}> = ({ letter, onPressIn, onPressOut, width, height }) => {
+    const progress = useSharedValue(0);
+    const [gradient, setGradient] = useState(GRADIENTS[0]);
+
+    const animatedStyle = useAnimatedStyle(() => {
+        const scale = 1 - progress.value * 0.15;
+        return {
+            transform: [{ scale }],
+        };
+    });
+
+    const textAnimatedStyle = useAnimatedStyle(() => ({
+        color: interpolateColor(
+            progress.value,
+            [0, 1],
+            ['#1F2937', '#FFFFFF'],
+        ),
+    }));
+
+    const gradientAnimatedStyle = useAnimatedStyle(() => ({
+        opacity: progress.value,
+    }));
+
+    return (
+        <AnimatedPressable
+            onPressIn={() => {
+                const randomIndex = Math.floor(Math.random() * GRADIENTS.length);
+                setGradient(GRADIENTS[randomIndex]);
+                onPressIn(letter);
+                progress.value = withTiming(1, { duration: 150 });
+            }}
+            onPressOut={() => {
+                progress.value = withTiming(0, { duration: 400 });
+                onPressOut();
+            }}
+            style={[{ width, height }, animatedStyle]}
+            className="items-center justify-center rounded-lg overflow-hidden border-gray-200 shadow-lg border"
+        >
+            <LinearGradient
+                colors={['#F9FAFB', '#E5E7EB']}
+                style={StyleSheet.absoluteFill}
+            />
+            <Animated.View style={[StyleSheet.absoluteFill, gradientAnimatedStyle]}>
+                <LinearGradient
+                    colors={gradient as [string, string]}
+                    style={StyleSheet.absoluteFill}
+                />
+            </Animated.View>
+            <AnimatedText style={textAnimatedStyle} className="text-3xl font-bold">
+                {letter}
+            </AnimatedText>
+        </AnimatedPressable>
+    );
 };
 
 /**
@@ -69,7 +138,9 @@ export const CustomKeyboard: FC<CustomKeyboardProps> = ({ onKeyPress }) => {
     );
 
     const reshuffle = useCallback(() => {
-        setKeys(shuffleArray(ALPHABET));
+        setTimeout(() => {
+            setKeys(shuffleArray(ALPHABET));
+        }, 50);
     }, [ALPHABET]);
 
     const numColumns = 5;
@@ -77,69 +148,6 @@ export const CustomKeyboard: FC<CustomKeyboardProps> = ({ onKeyPress }) => {
 
     const buttonWidth = layout ? layout.width / numColumns : 0;
     const buttonHeight = layout ? layout.height / numRows : 0;
-
-    const KeyButton: FC<{ letter: TKey }> = ({ letter }) => {
-        const progress = useSharedValue(0);
-
-        const animatedStyle = useAnimatedStyle(() => {
-            const scale = 1 - progress.value * 0.15;
-            return {
-                transform: [{ scale }],
-            };
-        });
-
-        const animatedTextStyle = useAnimatedStyle(() => ({
-            color: interpolateColor(
-                progress.value,
-                [0, 1],
-                ['#1F2937', '#FFFFFF'],
-            ),
-        }));
-
-        const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-        const AnimatedText = Animated.createAnimatedComponent(Text);
-
-        return (
-            <AnimatedPressable
-                onPressIn={() => {
-                    handleKeyPress(letter);
-                    progress.value = withTiming(1, { duration: 150 });
-                }}
-                onPressOut={() => {
-                    progress.value = withTiming(0, { duration: 400 });
-                    setTimeout(reshuffle, 50);
-                }}
-                style={[
-                    { width: buttonWidth, height: buttonHeight },
-                    animatedStyle,
-                ]}
-                className="items-center justify-center rounded-lg overflow-hidden border-gray-200 shadow-lg border"
-            >
-                <LinearGradient
-                    colors={['#F9FAFB', '#E5E7EB']}
-                    style={StyleSheet.absoluteFill}
-                />
-                <Animated.View
-                    style={[
-                        StyleSheet.absoluteFill,
-                        useAnimatedStyle(() => ({ opacity: progress.value })),
-                    ]}
-                >
-                    <LinearGradient
-                        colors={['#8B5CF6', '#6366F1']}
-                        style={StyleSheet.absoluteFill}
-                    />
-                </Animated.View>
-
-                <AnimatedText
-                    style={animatedTextStyle}
-                    className="text-3xl font-bold"
-                >
-                    {letter}
-                </AnimatedText>
-            </AnimatedPressable>
-        );
-    };
 
     const totalCells = numColumns * numRows;
     const placeholders = totalCells - keys.length;
@@ -152,7 +160,14 @@ export const CustomKeyboard: FC<CustomKeyboardProps> = ({ onKeyPress }) => {
             {layout && (
                 <>
                     {keys.map((k) => (
-                        <KeyButton key={k} letter={k} />
+                        <KeyButton
+                            key={k}
+                            letter={k}
+                            width={buttonWidth}
+                            height={buttonHeight}
+                            onPressIn={handleKeyPress}
+                            onPressOut={reshuffle}
+                        />
                     ))}
                     {Array.from({ length: placeholders }).map((_, idx) => (
                         <View
