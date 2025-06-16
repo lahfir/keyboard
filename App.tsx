@@ -28,6 +28,7 @@ export default function App() {
     setModalVisible(true);
     try {
       const res = await translateGibberish(text);
+      console.log(res);
       setResult(res);
     } catch (err: any) {
       setError(err.message ?? 'Translation failed');
