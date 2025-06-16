@@ -59,6 +59,7 @@ const KeyButton: FC<{
 }> = ({ letter, onPressIn, onPressOut, width, height }) => {
     const progress = useSharedValue(0);
     const [gradient, setGradient] = useState(GRADIENTS[0]);
+    const isSpace = letter === ' ';
 
     const animatedStyle = useAnimatedStyle(() => {
         const scale = 1 - progress.value * 0.15;
@@ -67,6 +68,7 @@ const KeyButton: FC<{
         };
     });
 
+    // Animations for letter keys
     const textAnimatedStyle = useAnimatedStyle(() => ({
         color: interpolateColor(
             progress.value,
@@ -75,15 +77,17 @@ const KeyButton: FC<{
         ),
     }));
 
-    const gradientAnimatedStyle = useAnimatedStyle(() => ({
+    const pressInOverlayStyle = useAnimatedStyle(() => ({
         opacity: progress.value,
     }));
 
     return (
         <AnimatedPressable
             onPressIn={() => {
-                const randomIndex = Math.floor(Math.random() * GRADIENTS.length);
-                setGradient(GRADIENTS[randomIndex]);
+                if (!isSpace) {
+                    const randomIndex = Math.floor(Math.random() * GRADIENTS.length);
+                    setGradient(GRADIENTS[randomIndex]);
+                }
                 onPressIn(letter);
                 progress.value = withTiming(1, { duration: 150 });
             }}
@@ -94,32 +98,61 @@ const KeyButton: FC<{
             style={[{ width, height }, animatedStyle]}
             className="items-center justify-center rounded-lg overflow-hidden border-gray-200 shadow-lg border"
         >
+            {/* Common base gradient for all keys */}
             <LinearGradient
                 colors={['#F9FAFB', '#E5E7EB']}
                 style={StyleSheet.absoluteFill}
             />
-            <Animated.View style={[StyleSheet.absoluteFill, gradientAnimatedStyle]}>
-                <LinearGradient
-                    colors={gradient as [string, string]}
-                    style={StyleSheet.absoluteFill}
-                />
-            </Animated.View>
-            <AnimatedText style={textAnimatedStyle} className="text-3xl font-bold">
-                {letter}
-            </AnimatedText>
+
+            {isSpace ? (
+                <>
+                    {/* Press-in overlay for space */}
+                    <Animated.View
+                        style={[
+                            StyleSheet.absoluteFill,
+                            { backgroundColor: '#D1D5DB' }, // gray-300
+                            pressInOverlayStyle,
+                        ]}
+                    />
+                    <View className="h-2 w-3/5 bg-gray-500 rounded-full" />
+                </>
+            ) : (
+                <>
+                    {/* Press-in overlay for letters */}
+                    <Animated.View
+                        style={[StyleSheet.absoluteFill, pressInOverlayStyle]}
+                    >
+                        <LinearGradient
+                            colors={gradient as [string, string]}
+                            style={StyleSheet.absoluteFill}
+                        />
+                    </Animated.View>
+                    <AnimatedText
+                        style={textAnimatedStyle}
+                        className="text-3xl font-bold"
+                    >
+                        {letter}
+                    </AnimatedText>
+                </>
+            )}
         </AnimatedPressable>
     );
 };
+
+const ALPHABET_WITH_SPACE = [
+    ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
+    ' ',
+];
 
 /**
  * Renders the letter-based keyboard with a reshuffle-on-press behaviour.
  */
 export const CustomKeyboard: FC<CustomKeyboardProps> = ({ onKeyPress }) => {
-    const ALPHABET = useMemo((): TKey[] =>
-        Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
-        []);
+    const ALPHABET = useMemo(() => ALPHABET_WITH_SPACE, []);
 
-    const [keys, setKeys] = useState<TKey[]>(() => shuffleArray(ALPHABET));
+    const [keys, setKeys] = useState<TKey[]>(() =>
+        shuffleArray(ALPHABET),
+    );
     const [layout, setLayout] = useState<{ width: number; height: number } | null>(
         null,
     );

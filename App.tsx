@@ -18,8 +18,8 @@ export default function App() {
     <RootSiblingParent>
       <SafeAreaView className="flex-1 bg-white">
         <StatusBar style="dark" />
-        <InputBar value={text} onClear={() => setText('')} />
         <CustomKeyboard onKeyPress={(key) => setText((prev) => prev + key)} />
+        <InputBar value={text} onClear={() => setText('')} />
       </SafeAreaView>
     </RootSiblingParent>
   );

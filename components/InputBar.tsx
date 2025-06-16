@@ -1,13 +1,12 @@
 /**
  * InputBar
  *
- * A visually distinct text input area pinned to the top of the screen. It
- * displays the composed text and offers a button to copy that text to the
- * clipboard. The bar is implemented with NativeWind classes and a subtle
- * Reanimated scaling interaction on the copy button.
+ * A visually distinct text input area anchored to the bottom of the screen. It
+ * displays the composed text in a horizontally scrollable view, ensuring all
+ * content is visible. It also offers "Copy" and "Clear" buttons.
  */
-import { FC } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { FC, useRef, useEffect } from 'react';
+import { Pressable, Text, View, ScrollView } from 'react-native';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
@@ -54,9 +53,17 @@ const ScalingPressable: FC<{ onPress: () => void; children: React.ReactNode }> =
 };
 
 /**
- * Renders the large input bar with copy-to-clipboard functionality.
+ * Renders the auto-scrolling input bar.
  */
 export const InputBar: FC<InputBarProps> = ({ value, onClear }) => {
+    const scrollViewRef = useRef<ScrollView>(null);
+
+    useEffect(() => {
+        if (value.length) {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+        }
+    }, [value]);
+
     const handleCopy = async () => {
         if (value) {
             await Clipboard.setStringAsync(value);
@@ -69,19 +76,38 @@ export const InputBar: FC<InputBarProps> = ({ value, onClear }) => {
         }
     };
 
-    return (
-        <View className="w-full bg-gray-100 px-4 py-5 border-b border-gray-300 flex-row items-center justify-between gap-3">
-            <Text
-                className="flex-1 text-2xl font-bold font-mono text-gray-800"
-                numberOfLines={1}
-                ellipsizeMode="tail"
-            >
-                {value || 'Type something…'}
-            </Text>
+    const handleClear = () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        onClear();
+    };
 
-            <ScalingPressable onPress={handleCopy}>
-                <Text className="text-white font-semibold">Copy</Text>
-            </ScalingPressable>
+    return (
+        <View className="w-full bg-gray-100 px-4 py-5 border-t border-gray-300 flex-row items-center justify-between gap-3">
+            {/* Scrollable Text Area */}
+            <View className="flex-1">
+                <ScrollView
+                    ref={scrollViewRef}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerClassName="items-center"
+                >
+                    <Text className="text-2xl font-bold font-mono text-gray-800 pr-2">
+                        {value || 'Type something…'}
+                    </Text>
+                </ScrollView>
+            </View>
+
+            {/* Action Buttons */}
+            <View className="flex-row items-center gap-3">
+                {value.length > 0 && (
+                    <ScalingPressable onPress={handleClear}>
+                        <Text className="text-white font-semibold">Clear</Text>
+                    </ScalingPressable>
+                )}
+                <ScalingPressable onPress={handleCopy}>
+                    <Text className="text-white font-semibold">Copy</Text>
+                </ScalingPressable>
+            </View>
         </View>
     );
 };
