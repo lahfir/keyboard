@@ -141,7 +141,7 @@ const KeyButton: FC<{
 
 const ALPHABET_WITH_SPACE = [
     ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
-    ' ', 'A', 'V', 'C'
+    ' ', ' ', ' ', ' '
 ];
 
 /**
