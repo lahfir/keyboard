@@ -141,7 +141,7 @@ const KeyButton: FC<{
 
 const ALPHABET_WITH_SPACE = [
     ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
-    ' ',
+    ' ', 'A', 'V', 'C'
 ];
 
 /**
@@ -194,7 +194,7 @@ export const CustomKeyboard: FC<CustomKeyboardProps> = ({ onKeyPress }) => {
                 <>
                     {keys.map((k) => (
                         <KeyButton
-                            key={k}
+                            key={k + Math.random()}
                             letter={k}
                             width={buttonWidth}
                             height={buttonHeight}
