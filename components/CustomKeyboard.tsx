@@ -37,6 +37,11 @@ function shuffleArray<T>(array: readonly T[]): T[] {
     return result;
 }
 
+type KeyData = {
+    id: number;
+    char: TKey;
+};
+
 type CustomKeyboardProps = {
     /** Callback triggered when a key is pressed. Receives the selected letter. */
     onKeyPress: (key: TKey) => void;
@@ -139,20 +144,22 @@ const KeyButton: FC<{
     );
 };
 
-const ALPHABET_WITH_SPACE = [
-    ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
-    ' ', ' ', ' ', ' '
-];
-
 /**
  * Renders the letter-based keyboard with a reshuffle-on-press behaviour.
  */
 export const CustomKeyboard: FC<CustomKeyboardProps> = ({ onKeyPress }) => {
-    const ALPHABET = useMemo(() => ALPHABET_WITH_SPACE, []);
+    const ALPHABET = useMemo((): KeyData[] => {
+        const letters = Array.from({ length: 26 }, (_, i) =>
+            String.fromCharCode(65 + i),
+        );
+        const spaces = Array(4).fill(' '); // 4 spaces to make a perfect 30-key grid
+        return [...letters, ...spaces].map((char, index) => ({
+            id: index,
+            char,
+        }));
+    }, []);
 
-    const [keys, setKeys] = useState<TKey[]>(() =>
-        shuffleArray(ALPHABET),
-    );
+    const [keys, setKeys] = useState<KeyData[]>(() => shuffleArray(ALPHABET));
     const [layout, setLayout] = useState<{ width: number; height: number } | null>(
         null,
     );
@@ -192,10 +199,10 @@ export const CustomKeyboard: FC<CustomKeyboardProps> = ({ onKeyPress }) => {
         >
             {layout && (
                 <>
-                    {keys.map((k) => (
+                    {keys.map((item) => (
                         <KeyButton
-                            key={k + Math.random()}
-                            letter={k}
+                            key={item.id}
+                            letter={item.char}
                             width={buttonWidth}
                             height={buttonHeight}
                             onPressIn={handleKeyPress}

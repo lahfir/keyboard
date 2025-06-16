@@ -100,13 +100,14 @@ export const InputBar: FC<InputBarProps> = ({ value, onClear }) => {
             {/* Action Buttons */}
             <View className="flex-row items-center gap-3">
                 {value.length > 0 && (
-                    <ScalingPressable onPress={handleClear}>
-                        <Text className="text-white font-semibold">Clear</Text>
-                    </ScalingPressable>
+                    <>
+                        <ScalingPressable onPress={handleClear}>
+                            <Text className="text-white font-semibold">Clear</Text>
+                        </ScalingPressable>
+                        <ScalingPressable onPress={handleCopy}>
+                            <Text className="text-white font-semibold">Copy</Text>
+                        </ScalingPressable></>
                 )}
-                <ScalingPressable onPress={handleCopy}>
-                    <Text className="text-white font-semibold">Copy</Text>
-                </ScalingPressable>
             </View>
         </View>
     );
