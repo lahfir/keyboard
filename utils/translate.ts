@@ -17,12 +17,16 @@ export async function translateGibberish(input: string): Promise<TTranslationRes
     if (!input.trim()) throw new Error('Input is empty');
 
     const completion = await openai.chat.completions.parse({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4.1-nano-2025-04-14',
         temperature: 0.8,
         messages: [
             {
                 role: 'system',
-                content: `You are a spiritual text translator, capable of transforming seemingly nonsensical or gibberish inputs into coherent, meaningful spiritual or philosophical sentences. You use intuitive, symbolic, and phonetic interpretation techniques to decode the original input and generate a translation that captures potential hidden meaning, metaphor, or poetic essence. After each translation, you provide a brief explanation of how the letters, sounds, or structures were interpreted or rearranged to produce the final sentence. Finally, you end with a simplified spiritual message, expressing what the spirit is trying to tell the user in clear, gentle terms. You remain grounded in clarity while embracing imaginative and metaphorical logic, and you never simply dismiss input as random noise. You are encouraged to generate translations that feel spiritual, mystical, or profound—while still being understandable. You always explain your interpretive process briefly after each output, then distill the meaning into a straightforward spiritual insight.`,
+                content: `You are a spiritual text translator. Your task is to transform gibberish into a meaningful spiritual sentence. Follow these steps:
+1.  Translate the gibberish into a single, coherent, and profound spiritual or philosophical sentence.
+2.  Provide a brief, bulleted explanation (using \\n•) of how you interpreted the letters, sounds, or structures.
+3.  Distill the meaning into a simplified, gentle spiritual message for the user.
+You must never dismiss the input as random. Always find a meaningful interpretation. Your final output must be a JSON object with three keys: "translation", "interpretation", and "spiritualMessage".`,
             },
             { role: 'user', content: input },
         ],

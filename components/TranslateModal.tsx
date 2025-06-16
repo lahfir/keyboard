@@ -123,6 +123,9 @@ export const TranslateModal: FC<TranslateModalProps> = ({
                             <View className="gap-5">
                                 {/* Main Translation Card */}
                                 <View className="p-5 bg-white rounded-lg shadow-sm border border-gray-100">
+                                    <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 text-center">
+                                        Translation
+                                    </Text>
                                     <Text
                                         style={{ fontFamily: 'serif' }}
                                         className="text-2xl italic text-center text-gray-800"
@@ -134,49 +137,23 @@ export const TranslateModal: FC<TranslateModalProps> = ({
                                 {/* Interpretation Card */}
                                 <View>
                                     <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                        Interpretation
+                                        Interpretation Process
                                     </Text>
                                     <View className="p-4 bg-white rounded-lg border border-gray-100">
                                         <Text className="text-base text-gray-700 leading-relaxed">
-                                            {result.explanation}
+                                            {result.interpretation}
                                         </Text>
                                     </View>
                                 </View>
 
-                                {/* Word Insights Card */}
-                                {result.wordInsights?.length > 0 && (
-                                    <View>
-                                        <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                            Symbolic Breakdown
-                                        </Text>
-                                        <View className="p-4 bg-white rounded-lg border border-gray-100 gap-3">
-                                            {result.wordInsights.map(({ word, insight }, idx) => (
-                                                <View
-                                                    key={idx}
-                                                    className="flex-row items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100"
-                                                >
-                                                    <View className="w-6 h-6 rounded-full bg-teal-100 items-center justify-center">
-                                                        <Text className="text-teal-600 font-medium">{idx + 1}</Text>
-                                                    </View>
-                                                    <View className="flex-1">
-                                                        <Text className="text-base font-medium text-gray-800 mb-1">
-                                                            {word}
-                                                        </Text>
-                                                        <Text className="text-sm text-gray-600 leading-relaxed">
-                                                            {insight}
-                                                        </Text>
-                                                    </View>
-                                                </View>
-                                            ))}
-                                        </View>
-                                    </View>
-                                )}
-
                                 {/* Final Insight Card */}
                                 <View className="mt-2">
+                                    <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                        Spiritual Message
+                                    </Text>
                                     <View className="p-5 bg-teal-50 border border-teal-200 rounded-lg">
                                         <Text className="text-lg text-center font-semibold text-teal-800">
-                                            {result.insight}
+                                            {result.spiritualMessage}
                                         </Text>
                                     </View>
                                 </View>

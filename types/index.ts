@@ -13,21 +13,19 @@ import { z } from 'zod';
 export type TKey = string;
 
 /**
- * Structured result returned by the gibberish translator.
- */
-
-/**
  * Shared Zod schema describing `TTranslationResult`.  This can be reused by the
  * OpenAI `zodResponseFormat` helper so we keep the contract in one place.
  */
 export const TranslationSchema = z.object({
-    translation: z.string().describe('The translated spiritual message'),
-    explanation: z.string().describe('A brief explanation of the interpretive process'),
-    wordInsights: z.array(z.object({
-        word: z.string().describe('The word that was translated'),
-        insight: z.string().describe('A brief explanation of the word'),
-    })).describe('Word-by-word or fragment-by-fragment breakdown'),
-    insight: z.string().describe('A distilled spiritual insight for the user'),
+    translation: z
+        .string()
+        .describe('The coherent, spiritual, or philosophical sentence translated from the gibberish input.'),
+    interpretation: z
+        .string()
+        .describe('A bulleted list (using \\n•) explaining how the original text was phonetically or symbolically interpreted.'),
+    spiritualMessage: z
+        .string()
+        .describe('A simplified, gentle spiritual message for the user.'),
 });
 
 export type TTranslationResult = z.infer<typeof TranslationSchema>;
