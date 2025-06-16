@@ -1,0 +1,65 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Project Coding & UI Guidelines
+
+1. **Write clean and modular code**  
+   • Follow the Single-Responsibility Principle: each component, hook, or utility should do one thing only.  
+   • Extract logic into composable React hooks or helper functions inside `utils/`.  
+   • Structure features in their own folders and expose a barrel export (`index.ts`) to keep import paths short.  
+   • Avoid deep component trees—split complex views into smaller, self-contained sub-components.
+
+2. **Prefer `.tsx` and `.ts` files; avoid plain `.js`**  
+   • Enable `strict` mode in `tsconfig.json` and fix every type error before committing.  
+   • Use ES module syntax—no `require` calls.  
+   • Convert third-party JS snippets to TypeScript before integrating them.
+
+3. **Define and reuse shared types inside the [types](mdc:types) directory**  
+   • Never redefine a shape that already exists—import it instead.  
+   • Prefix type aliases with `T` (e.g. `TUser`) for quick recognition.  
+   • Provide an `index.ts` barrel so consumers can simply `import { TUser } from 'types';`.
+
+4. **Do not write line comments—use docstrings (TSDoc/JSDoc) for documentation**  
+   • Every public function, React component, hook, and type must have a docstring explaining its purpose, parameters, and return type.  
+   • Use the `/** ... */` TSDoc format so editors surface the docs via IntelliSense.  
+   • Keep docstrings concise (≤ 5 sentences).
+
+5. **Search the codebase for relevant modules or utilities before creating new ones**  
+   • Use the IDE's global search or run `bun run sls -- "keyword"` to locate existing code (sls = super-light search script).  
+   • Extend or refactor existing utilities rather than duplicating logic.  
+   • If a new file is unavoidable, ensure the concept cannot be expressed by re-composing current abstractions.
+
+6. **Think critically before implementing; prioritise readability and maintainability**  
+   • Draft the API surface of new modules in a design doc (`docs/adr-XXX.md`) prior to coding.  
+   • Prefer simple, explicit solutions over clever but opaque ones.  
+   • Benchmark performance only when a real bottleneck is identified.
+
+7. **Use the latest Expo SDK and install dependencies with `bun` or `yarn`**  
+   • Stick to a single lockfile; do not mix `yarn.lock` and `bun.lockb`.  
+   • After adding a native module, run `expo prebuild` and commit any updated config plugins.  
+   • Keep `app.json` and `eas.json` in sync with the Expo SDK version.
+
+8. **Employ subtle, performant animations with `react-native-reanimated`**  
+   • Use `useSharedValue` + `useAnimatedStyle`; avoid `LayoutAnimation` unless necessary.  
+   • Limit animations to 300 ms unless UX demands otherwise.  
+   • Prefer declarative wrappers (e.g. `MotiView`) if they suffice.  
+   • Validate performance with the Reanimated frame-rate monitor—never block the JS thread.
+
+9. **Style components with `nativewind`**  
+   • Create Tailwind utility classes in `tailwind.config.js` rather than inline style objects.  
+   • Use semantic utility prefixes (`btn-primary`, `text-error`) via the `className` prop for reusable patterns.  
+   • Keep the colour palette minimal and reference variables from the extended NativeWind theme.
+
+10. **Uphold a minimalistic yet visually pleasing UI with excellent UX**  
+    • Embrace whitespace and consistent spacing (`gap-4`, `px-5`, etc.).  
+    • Ensure tap targets are ≥ 44 px tall and accessible.  
+    • Use system fonts (`font-sans`, `font-mono`) to reduce bundle size.  
+    • Dark mode support is mandatory—use Tailwind's `dark:` variants and test on physical devices.  
+    • Validate designs against WCAG AA colour-contrast ratios.
+
+---
+
+Key entry points:
+- The application bootstraps from [App.tsx](mdc:App.tsx).
