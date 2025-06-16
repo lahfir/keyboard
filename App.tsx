@@ -41,13 +41,18 @@ export default function App() {
       <SafeAreaView className="flex-1 bg-white">
         <StatusBar style="dark" />
         <CustomKeyboard onKeyPress={(key) => setText((prev) => prev + key)} />
-        <InputBar value={text} onClear={() => setText('')} onTranslate={handleTranslate} />
+        <InputBar
+          value={text}
+          onClear={() => setText('')}
+          onTranslate={handleTranslate}
+        />
         <TranslateModal
           visible={modalVisible}
           result={result}
           loading={loading}
           error={error}
           onClose={() => setModalVisible(false)}
+          originalText={text}
         />
       </SafeAreaView>
     </RootSiblingParent>

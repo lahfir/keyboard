@@ -69,6 +69,7 @@ interface TranslateModalProps {
     onClose: () => void;
     loading: boolean;
     error?: string | null;
+    originalText: string;
 }
 
 export const TranslateModal: FC<TranslateModalProps> = ({
@@ -77,6 +78,7 @@ export const TranslateModal: FC<TranslateModalProps> = ({
     onClose,
     loading,
     error,
+    originalText,
 }) => {
     return (
         <Modal
@@ -122,6 +124,17 @@ export const TranslateModal: FC<TranslateModalProps> = ({
                         )}
                         {result && !loading && (
                             <View className="gap-5">
+                                {/* Original Text Card */}
+                                <View className="p-4 bg-gray-100 rounded-lg border border-gray-200">
+                                    <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2 text-center">MESSAGE</Text>
+                                    <Text
+                                        style={{ fontFamily: 'monospace' }}
+                                        className="text-lg text-center text-gray-600"
+                                    >
+                                        &quot;{originalText}&quot;
+                                    </Text>
+                                </View>
+
                                 {/* Main Translation Card */}
                                 <View className="p-5 bg-white rounded-lg shadow-sm border border-gray-100">
                                     <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 text-center">
