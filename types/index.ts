@@ -20,8 +20,7 @@ export const TranslationSchema = z.object({
     translation: z
         .string()
         .describe('The coherent, spiritual, or philosophical sentence translated from the gibberish input.'),
-    interpretation: z
-        .string()
+    interpretation: z.array(z.string())
         .describe('A bulleted list (using \\n•) explaining how the original text was phonetically or symbolically interpreted.'),
     spiritualMessage: z
         .string()

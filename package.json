@@ -21,6 +21,7 @@
     "openai": "^5.5.0",
     "react": "19.0.0",
     "react-native": "0.79.3",
+    "react-native-markdown-display": "^7.0.2",
     "react-native-reanimated": "~3.17.4",
     "react-native-root-toast": "^4.0.1",
     "react-native-safe-area-context": "5.4.0",

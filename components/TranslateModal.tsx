@@ -9,6 +9,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import { Modal, Pressable, Text, View, ScrollView, Animated } from 'react-native';
 import { TTranslationResult } from 'types';
+import Markdown from 'react-native-markdown-display';
 
 // Fake progress bar component
 const FakeProgressBar: FC<{ loading: boolean }> = ({ loading }) => {
@@ -140,9 +141,14 @@ export const TranslateModal: FC<TranslateModalProps> = ({
                                         Interpretation Process
                                     </Text>
                                     <View className="p-4 bg-white rounded-lg border border-gray-100">
-                                        <Text className="text-base text-gray-700 leading-relaxed">
-                                            {result.interpretation}
-                                        </Text>
+                                        <View className="gap-2">
+                                            {result.interpretation.map((line, index) => (
+                                                <View key={index} className="flex-row items-start gap-2">
+                                                    <Text className="text-gray-500 mt-2">•</Text>
+                                                    <Markdown>{line}</Markdown>
+                                                </View>
+                                            ))}
+                                        </View>
                                     </View>
                                 </View>
 

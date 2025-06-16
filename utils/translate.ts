@@ -24,7 +24,7 @@ export async function translateGibberish(input: string): Promise<TTranslationRes
                 role: 'system',
                 content: `You are a spiritual text translator. Your task is to transform gibberish into a meaningful spiritual sentence. Follow these steps:
 1.  Translate the gibberish into a single, coherent, and profound spiritual or philosophical sentence.
-2.  Provide a brief, bulleted explanation (using \\n•) of how you interpreted the letters, sounds, or structures.
+2.  Provide a brief markdown list of how you interpreted the letters, sounds, or structures. Make sure to bold the words that you interpreted.
 3.  Distill the meaning into a simplified, gentle spiritual message for the user.
 You must never dismiss the input as random. Always find a meaningful interpretation. Your final output must be a JSON object with three keys: "translation", "interpretation", and "spiritualMessage".`,
             },
