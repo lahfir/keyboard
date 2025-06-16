@@ -18,11 +18,13 @@
     "expo-status-bar": "~2.2.3",
     "expo-updates": "~0.28.14",
     "nativewind": "latest",
+    "openai": "^5.5.0",
     "react": "19.0.0",
     "react-native": "0.79.3",
     "react-native-reanimated": "~3.17.4",
     "react-native-root-toast": "^4.0.1",
-    "react-native-safe-area-context": "5.4.0"
+    "react-native-safe-area-context": "5.4.0",
+    "zod": "^3.25.65"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

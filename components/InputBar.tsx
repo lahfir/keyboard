@@ -12,15 +12,15 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
-import Toast from 'react-native-root-toast';
 
 export type InputBarProps = {
     /** Current value of the composed text */
     value: string;
     /** Callback to clear text after copy */
     onClear: () => void;
+    /** Trigger translation process */
+    onTranslate: () => void;
 };
 
 /** Reanimated wrapper that scales down on press. */
@@ -55,7 +55,7 @@ const ScalingPressable: FC<{ onPress: () => void; children: React.ReactNode }> =
 /**
  * Renders the auto-scrolling input bar.
  */
-export const InputBar: FC<InputBarProps> = ({ value, onClear }) => {
+export const InputBar: FC<InputBarProps> = ({ value, onClear, onTranslate }) => {
     const scrollViewRef = useRef<ScrollView>(null);
 
     useEffect(() => {
@@ -63,18 +63,6 @@ export const InputBar: FC<InputBarProps> = ({ value, onClear }) => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }
     }, [value]);
-
-    const handleCopy = async () => {
-        if (value) {
-            await Clipboard.setStringAsync(value);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            Toast.show('Text copied!', {
-                duration: Toast.durations.SHORT,
-                position: Toast.positions.BOTTOM,
-            });
-            onClear();
-        }
-    };
 
     const handleClear = () => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
@@ -104,9 +92,10 @@ export const InputBar: FC<InputBarProps> = ({ value, onClear }) => {
                         <ScalingPressable onPress={handleClear}>
                             <Text className="text-white font-semibold">Clear</Text>
                         </ScalingPressable>
-                        <ScalingPressable onPress={handleCopy}>
-                            <Text className="text-white font-semibold">Copy</Text>
-                        </ScalingPressable></>
+                        <ScalingPressable onPress={onTranslate}>
+                            <Text className="text-white font-semibold">Translate</Text>
+                        </ScalingPressable>
+                    </>
                 )}
             </View>
         </View>
